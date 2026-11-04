@@ -1,0 +1,27 @@
+name: Sync Token
+
+on:
+  workflow_dispatch: {}   # manual only, run it when a token has been renewed
+
+permissions: {}
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install pynacl
+
+      - name: Push new token to all repos
+        env:
+          ADMIN_PAT: ${{ secrets.ADMIN_PAT }}
+          NEW_SCAN_TOKEN: ${{ secrets.NEW_SCAN_TOKEN }}
+        run: python scripts/sync_token.py
